@@ -22,15 +22,43 @@
                     <h2 class="text-lg text-gray-600 text-sm font-normal mb-3">Tasks</h2>
                     
                     @foreach($project->tasks as $task)
-                        <div class="bg-white p-5 rounded-lg shadow mb-6">{{$task->body}}</div>
+                        <div class="bg-white p-5 rounded-lg shadow mb-6">
+                            <form action="{{$task->path()}}" method="POST">
+                                @method('PATCH')
+                                @csrf
+                                <div class="flex">
+                                    <input name="body" value="{{$task->body}}" class="w-full {{ $task->completed ? 'text-gray-400' : ''}}">
+                                    <input type="checkbox" name="completed" onchange="this.form.submit()" {{$task->completed ? 'checked' : ''}}>
+                                </div>
+                            </form>
+                        </div>
+                    
                     @endforeach
+                        <div class="bg-white p-5 rounded-lg shadow mb-6">
+                           <form action="{{$project->path() . '/tasks'}}" method="POST">
+                               @csrf
+                                <input type="text" name="body" placeholder="Add a new task ..." class="w-full"> 
+                           </form>
+
+                        </div>
                 </div>
 
                 <div>
                     
                     <h2 class="text-lg text-gray-600 text-sm font-normal mb-3">General Notes</h2>
 
-                    <textarea class="bg-white p-5 rounded-lg shadow w-full" style="min-height: 200px;">Lorem ipsum</textarea>
+                    <form action="{{$project->path()}}" method="POST">
+                        @csrf
+                        @method('PATCH')
+
+                        <textarea 
+                            name="notes"
+                            class="bg-white p-5 rounded-lg shadow w-full" 
+                            style="min-height: 200px;" 
+                            placeholder="Add notes here ...">{{$project->notes}}</textarea>
+
+                        <button type="submit" class="button">Save</button>
+                    </form>
                 </div>
             </div>
 
@@ -41,13 +69,6 @@
     </main>
 
 
-
-
-
-
-
-    <h1>{{$project->title}}</h1>
-    <div>{{$project->description}}</div>
 
     <a href="/projects">Go Back</a>
 @endsection
